@@ -22,41 +22,49 @@ def decrypt(ciphertext, keyMap):
         decryptText.append(keyMap[ch.upper()])
     return "".join(decryptText)
 
+def showKeys(decryptKeyMap, encryptKeyMap):
+    print("Decrpytion key: " + decrypt("abcdefghijklmnopqrstuvwxyz", decryptKeyMap))
+    print("Encryption key: "+ decrypt("abcdefghijklmnopqrstuvwxyz", encryptKeyMap))
+
 def main():
     ciphertext = input("Enter ciphertext: ")
     if frequencyCount(ciphertext) == 1:
         return
     currentKeyMap = {chr(i + 65): chr(i + 97) for i in range(26)}# A-Z to a-z; cipher to plain
+    reverseKeyMap = {chr(i + 97): chr(i + 65) for i in range(26)}# a-z to A-Z; plain to cipher
     while True:
         print("Current decryption: ")
         print(decrypt(ciphertext, currentKeyMap))
         
-        userIn = input("Enter 'KEY' to guess full key, 'SUB' to map cipher char to plaintext char, or 'QUIT': ").upper()
+        userIn = input("Enter 'KEY' to guess full key, 'SUB' to map cipher char to plaintext char, 'FINISH' if plaintext found, or 'QUIT': ").upper()
         
         if userIn == "QUIT":
             break
         
-        elif userIn == 'KEY':
+        elif userIn == "KEY":
             keyGuess = input("Enter full key (26 unique uppercase letters): ").upper()
             alphaSet = set()
+            betaSet = set()
             success = True
             if len(keyGuess) == 26 and keyGuess.isalpha():
                 for i in range(26):
                     cchar = chr(i + 65)
                     pchar = keyGuess[i]
-                    if pchar in alphaSet:
+                    if pchar in alphaSet or cchar in betaSet:
                         print("Invalid key: duplicate character: " + cchar)
                         success = False
                         break
                     else:
                         currentKeyMap[cchar] = pchar
+                        reverseKeyMap[pchar] = cchar
                         alphaSet.add(pchar)
+                        betaSet.add(cchar)
                 if success: print("Key success")
                 else: print("Key failure")
             else:
                 print("Invalid key: wrong size or nonalphabetic character")
         
-        elif userIn == 'SUB':
+        elif userIn == "SUB":
             subGuess = input("Enter substitution in format C=a (CIPHERTEXT=plaintext)")
             if len(subGuess) != 3: print("Invalid format")
             elif ord(subGuess[0]) < 65 or ord(subGuess[0]) > 90: print("Invalid character: " + subGuess[0])
@@ -72,6 +80,10 @@ def main():
                 currentKeyMap[cchar] = pchar
                 currentKeyMap[tkey] = tval
                 print(f"Substitution successful; values for {cchar} and {tkey} swapped")
+        
+        elif userIn == "FINISH":
+            showKeys(currentKeyMap, reverseKeyMap)
+            break
         
         else:
             print("Invalid input")
