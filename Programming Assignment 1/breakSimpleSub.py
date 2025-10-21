@@ -19,19 +19,19 @@ def frequencyCount(ciphertext):
 def decrypt(ciphertext, keyMap):
     decryptText = []
     for ch in ciphertext:
-        decryptText.append(keyMap[ch.lower()])
+        decryptText.append(keyMap[ch.upper()])
     return "".join(decryptText)
 
 def main():
     ciphertext = input("Enter ciphertext: ")
     if frequencyCount(ciphertext) == 1:
         return
-    currentKeyMap = {chr(i + 97): chr(i + 65) for i in range(26)}# a-z to A-Z; plain to cipher
+    currentKeyMap = {chr(i + 65): chr(i + 97) for i in range(26)}# A-Z to a-z; cipher to plain
     while True:
         print("Current decryption: ")
         print(decrypt(ciphertext, currentKeyMap))
         
-        userIn = input("Enter 'KEY' to guess full key, 'SUB' to map cipher char to plaintext char, or 'QUIT': ")
+        userIn = input("Enter 'KEY' to guess full key, 'SUB' to map cipher char to plaintext char, or 'QUIT': ").upper()
         
         if userIn == "QUIT":
             break
@@ -42,15 +42,15 @@ def main():
             success = True
             if len(keyGuess) == 26 and keyGuess.isalpha():
                 for i in range(26):
-                    pchar = chr(i + 97)
-                    cchar = keyGuess[i]
-                    if cchar in alphaSet:
+                    cchar = chr(i + 65)
+                    pchar = keyGuess[i]
+                    if pchar in alphaSet:
                         print("Invalid key: duplicate character: " + cchar)
                         success = False
                         break
                     else:
-                        currentKeyMap[pchar] = cchar
-                        alphaSet.add(cchar)
+                        currentKeyMap[cchar] = pchar
+                        alphaSet.add(pchar)
                 if success: print("Key success")
                 else: print("Key failure")
             else:
@@ -65,13 +65,13 @@ def main():
             else:
                 pchar = subGuess[2]
                 cchar = subGuess[0]
-                tkey = pchar
-                tval = currentKeyMap[pchar]
+                tkey = cchar
+                tval = currentKeyMap[cchar]
                 for key, value in currentKeyMap.items():
-                    if value == cchar: tkey = key
-                currentKeyMap[pchar] = cchar
+                    if value == pchar: tkey = key
+                currentKeyMap[cchar] = pchar
                 currentKeyMap[tkey] = tval
-                print(f"Substitution successful; values for {pchar} and {tkey} swapped")
+                print(f"Substitution successful; values for {cchar} and {tkey} swapped")
         
         else:
             print("Invalid input")
