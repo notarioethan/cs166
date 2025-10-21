@@ -73,12 +73,13 @@ def main():
             else:
                 pchar = subGuess[2]
                 cchar = subGuess[0]
-                tkey = cchar
+                tkey = reverseKeyMap[pchar]
                 tval = currentKeyMap[cchar]
-                for key, value in currentKeyMap.items():
-                    if value == pchar: tkey = key
+                
                 currentKeyMap[cchar] = pchar
                 currentKeyMap[tkey] = tval
+                reverseKeyMap[tval] = tkey
+                reverseKeyMap[pchar] = cchar
                 print(f"Substitution successful; values for {cchar} and {tkey} swapped")
         
         elif userIn == "FINISH":
