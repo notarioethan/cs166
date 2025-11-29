@@ -18,8 +18,8 @@ class A51:
     def feedback_function(self, reg_val, taps, length):
         feedbit = 0
         for tap in taps:
-            feedbit = feedbit ^ (reg_val >> tap) & 1
-        new_val = (reg_val >> 1) | (feedbit << (length - 1))
+            feedbit = feedbit ^ ((reg_val >> tap) & 1)
+        new_val = ((reg_val >> 1) | (feedbit << (length - 1)))
         return new_val
     
     def gen_keystream(self, length):
